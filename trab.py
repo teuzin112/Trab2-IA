@@ -154,15 +154,6 @@ class Graph:
 
         self.h.update({source: items})
 
-        if not self.is_directed:
-            items = self.h.get(destination)
-            if items:
-                items.append((source, weight))
-            else:
-                items = [(source, weight)]
-
-            self.h.update({destination: items})
-
 
 def read_file(file_path, graph):
     with open(file_path, 'r') as file:
@@ -188,11 +179,16 @@ def read_file(file_path, graph):
 
             i += 1
         
-        while lines[i].startswith('h('):
+        print('asdasd')
+
+        while i < len(lines) and lines[i].startswith('h('):
             aux = lines[i][lines[i].find('(') + 1 : lines[i].find(')')]
             aux = aux.split(',')
+            vertex_1 = aux[0]
+            vertex_2 = aux[1]
+            h = int(aux[2])
 
-
+            graph.add_h(vertex_1, vertex_2, h)
 
             i += 1
 
