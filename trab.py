@@ -3,14 +3,15 @@ import time
     
 class Graph:
 
-    def __init__(self, is_directed, adjacency_list = {}):
+    def __init__(self, is_directed, adjacency_list = {}, h = {}):
+        self.h = h
         self.adjacency_list = adjacency_list
         self.is_directed = is_directed
 
     def get_neighbors(self, v):
         return self.adjacency_list[v]
 
-    def h(self, n):
+    def get_h(self, n):
         H = {
             'A': 10,
             'B': 8,
@@ -36,7 +37,7 @@ class Graph:
         while len(open_list) > 0:
             n = None
             for v in open_list:
-                if n == None or g[v] + self.h(v) < g[n] + self.h(n):
+                if n == None or g[v] + self.get_h(v) < g[n] + self.get_h(n):
                     n = v
 
             if n == None:
@@ -128,6 +129,40 @@ class Graph:
 
             self.adjacency_list.update({destination: items})
 
+    def add_h(self, source, destination, weight):
+        # if source not in self.adjacency_list:
+        #     self.adjacency_list.update({source: [(destination, weight)]})
+
+        #     if not self.is_directed:
+        #         self.adjacency_list.update({destination: [(source, weight)]})
+                
+        # else:
+        #     items = self.adjacency_list.get(source)
+        #     items.append((destination, weight))
+        #     self.adjacency_list.update({source: items})
+
+        #     if not self.is_directed:
+        #         items = self.adjacency_list.get(destination)
+        #         items.append((source, weight))
+        #         self.adjacency_list.update({source: items})
+
+        items = self.h.get(source)
+        if items:
+            items.append((destination, weight))
+        else:
+            items = [(destination, weight)]
+
+        self.h.update({source: items})
+
+        if not self.is_directed:
+            items = self.h.get(destination)
+            if items:
+                items.append((source, weight))
+            else:
+                items = [(source, weight)]
+
+            self.h.update({destination: items})
+
 
 def read_file(file_path, graph):
     with open(file_path, 'r') as file:
@@ -156,6 +191,8 @@ def read_file(file_path, graph):
         while lines[i].startswith('h('):
             aux = lines[i][lines[i].find('(') + 1 : lines[i].find(')')]
             aux = aux.split(',')
+
+
 
             i += 1
 
