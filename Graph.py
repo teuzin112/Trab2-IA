@@ -7,6 +7,8 @@ class Graph:
         self.h = h
         self.adjacency_list = adjacency_list
         self.is_directed = is_directed
+        self.path_start = None
+        self.path_end = None
 
     def get_neighbors(self, v):
         return self.adjacency_list[v]
@@ -15,34 +17,34 @@ class Graph:
        
         return self.h.get(source).get(destination)
 
-    def a_star(self, start_node, stop_node):
-        open_list = set([start_node])
+    def a_star(self):
+        open_list = set([self.path_start])
         closed_list = set([])
         g = {}
-        g[start_node] = 0
+        g[self.path_start] = 0
         parents = {}
-        parents[start_node] = start_node
+        parents[self.path_start] = self.path_start
 
         while len(open_list) > 0:
             n = None
             for v in open_list:
-                if n == None or g[v] + self.get_h(start_node, v) < g[n] + self.get_h(start_node, n):
+                if n == None or g[v] + self.get_h(self.path_start, v) < g[n] + self.get_h(self.path_start, n):
                     n = v
 
             if n == None:
                 print('Path does not exist!')
                 return None
                 
-            if n == stop_node:
+            if n == self.path_end:
                 reconst_path = []
                 total_weight = 0
                 while parents[n] != n:
                     reconst_path.append(n)
                     total_weight += self.get_weight(parents[n], n)
                     n = parents[n]
-                reconst_path.append(start_node)
+                reconst_path.append(self.path_start)
                 reconst_path.reverse()
-                total_weight += self.get_weight(start_node, reconst_path[1])
+                total_weight += self.get_weight(self.path_start, reconst_path[1])
                 print('Path found: {}, Total Weight: {}'.format(reconst_path, total_weight))
                 return reconst_path
 
@@ -65,14 +67,14 @@ class Graph:
         print('Path does not exist!')
         return None
 
-    def dfs(self, start, end):
-        stack = [(start, [start], 0)]  # Added total_weight to the stack
+    def dfs(self):
+        stack = [(self.path_start, [self.path_end], 0)]  # Added total_weight to the stack
         all_paths = []
         while stack:
             (vertex, path, total_weight) = stack.pop()
             for (neighbor, weight) in self.get_neighbors(vertex):
                 if neighbor not in path:
-                    if neighbor == end:
+                    if neighbor == self.path_end:
                         all_paths.append((path + [neighbor], total_weight + weight))
                     else:
                         stack.append((neighbor, path + [neighbor], total_weight + weight))
@@ -85,22 +87,6 @@ class Graph:
         return float('inf')  # Assuming infinity if there's no direct edge
 
     def add_edge(self, source, destination, weight):
-        # if source not in self.adjacency_list:
-        #     self.adjacency_list.update({source: [(destination, weight)]})
-
-        #     if not self.is_directed:
-        #         self.adjacency_list.update({destination: [(source, weight)]})
-                
-        # else:
-        #     items = self.adjacency_list.get(source)
-        #     items.append((destination, weight))
-        #     self.adjacency_list.update({source: items})
-
-        #     if not self.is_directed:
-        #         items = self.adjacency_list.get(destination)
-        #         items.append((source, weight))
-        #         self.adjacency_list.update({source: items})
-
         items = self.adjacency_list.get(source)
         if items:
             items.append((destination, weight))
@@ -119,22 +105,6 @@ class Graph:
             self.adjacency_list.update({destination: items})
 
     def add_h(self, source, destination, weight):
-        # if source not in self.adjacency_list:
-        #     self.adjacency_list.update({source: [(destination, weight)]})
-
-        #     if not self.is_directed:
-        #         self.adjacency_list.update({destination: [(source, weight)]})
-                
-        # else:
-        #     items = self.adjacency_list.get(source)
-        #     items.append((destination, weight))
-        #     self.adjacency_list.update({source: items})
-
-        #     if not self.is_directed:
-        #         items = self.adjacency_list.get(destination)
-        #         items.append((source, weight))
-        #         self.adjacency_list.update({source: items})
-
         items = self.h.get(source)
         if items:
             items.update({destination: weight})
@@ -144,58 +114,3 @@ class Graph:
         self.h.update({source: items})
 
 
-def read_file(file_path, graph):
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-
-        if len(lines) < 2:
-            print('Invalid file')
-            return
-
-        source = lines[0][lines[0].find('(') + 1]
-        destination = lines[1][lines[1].find('(') + 1]
-
-        adjacency_list = {}
-        i = 2
-        while 'pode_ir' in lines[i]:
-            aux = lines[i][lines[i].find('(') + 1 : lines[i].find(')')]
-            aux = aux.split(',')
-            vertex_1 = aux[0]
-            vertex_2 = aux[1]
-            weight = int(aux[2])
-
-            graph.add_edge(vertex_1, vertex_2, weight)
-
-            i += 1
-        
-        print('asdasd')
-
-        while i < len(lines) and lines[i].startswith('h('):
-            aux = lines[i][lines[i].find('(') + 1 : lines[i].find(')')]
-            aux = aux.split(',')
-            vertex_1 = aux[0]
-            vertex_2 = aux[1]
-            h = int(aux[2])
-
-            graph.add_h(vertex_1, vertex_2, h)
-
-            i += 1
-
-
-
-graph1 = Graph(is_directed=False)
-
-read_file('teste.txt', graph1)
-
-
-print('asdasd')
-
-# start_time = time.time() 
-graph1.a_star('a', 'd')
-# print("--- %s seconds ---" % (time.time() - start_time))
-
-print("\n")
-print("All possible paths from a to d using DFS:")
-all_paths = graph1.dfs('a', 'd')
-for path, total_weight in all_paths:
-    print("Path:", path, "Total Weight:", total_weight)
