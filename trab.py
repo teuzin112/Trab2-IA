@@ -11,20 +11,9 @@ class Graph:
     def get_neighbors(self, v):
         return self.adjacency_list[v]
 
-    def get_h(self, n):
-        H = {
-            'A': 10,
-            'B': 8,
-            'C': 5,
-            'D': 7,
-            'E': 3,
-            'F': 6,
-            'G': 5,
-            'H': 3,
-            'I': 3,
-            'J': 1
-        }
-        return H[n]
+    def get_h(self, source, destination):
+       
+        return self.h.get(source).get(destination)
 
     def a_star(self, start_node, stop_node):
         open_list = set([start_node])
@@ -37,7 +26,7 @@ class Graph:
         while len(open_list) > 0:
             n = None
             for v in open_list:
-                if n == None or g[v] + self.get_h(v) < g[n] + self.get_h(n):
+                if n == None or g[v] + self.get_h(start_node, v) < g[n] + self.get_h(start_node, n):
                     n = v
 
             if n == None:
@@ -148,9 +137,9 @@ class Graph:
 
         items = self.h.get(source)
         if items:
-            items.append((destination, weight))
+            items.update({destination: weight})
         else:
-            items = [(destination, weight)]
+            items = {destination: weight}
 
         self.h.update({source: items})
 
@@ -200,26 +189,13 @@ read_file('teste.txt', graph1)
 
 
 print('asdasd')
-# adjacency_list = {
-#     'A': [('B', 6), ('F', 3)],
-#     'B': [('C', 3),('D', 2)],
-#     'C': [('D', 1),('E', 5)],
-#     'D': [('B', 2),('C', 1),('E', 8)],
-#     'E': [('C', 5),('D', 8),('I', 5),('J', 5)],
-#     'F': [('A', 3),('G', 1),('H', 7)],
-#     'G': [('F', 1),('I', 3)],
-#     'H': [('F', 7),('I', 2)],
-#     'I': [('E', 5),('G', 3),('H', 2),('J', 3)],
-#     'J': [('E', 5),('I', 3)]
-# }
 
-# graph1 = Graph(adjacency_list)
-# # start_time = time.time() 
-# graph1.a_star('A', 'J')
-# # print("--- %s seconds ---" % (time.time() - start_time))
+# start_time = time.time() 
+graph1.a_star('a', 'd')
+# print("--- %s seconds ---" % (time.time() - start_time))
 
-# print("\n")
-# print("All possible paths from A to J using DFS:")
-# all_paths = graph1.dfs('A', 'J')
-# for path, total_weight in all_paths:
-#     print("Path:", path, "Total Weight:", total_weight)
+print("\n")
+print("All possible paths from a to d using DFS:")
+all_paths = graph1.dfs('a', 'd')
+for path, total_weight in all_paths:
+    print("Path:", path, "Total Weight:", total_weight)
