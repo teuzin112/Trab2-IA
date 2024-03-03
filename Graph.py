@@ -99,6 +99,8 @@ class Graph:
 
                 final_time = perf_counter_ns()
                 print("--- Tempo total de execucao: %s nanosegundos ---" % (final_time-initial_time))
+                print("--- Numero total de iteracoes: %s nanosegundos ---" % (self.iterations))
+                print("--- Numero total de operacoes: %s nanosegundos ---" % (self.operations))
 
                 # f = open("aestrela_resultados.txt", "a")
                 # f.write("%s\n" % (final_time-initial_time))
@@ -214,7 +216,8 @@ class Graph:
         print('Peso total: {}'.format(final_weight))
 
         print("--- Tempo total de execucao: %s nanosegundos ---" % (final_time-initial_time))
-        print(final_time-initial_time)
+        print("--- Numero total de iteracoes: %s nanosegundos ---" % (self.iterations))
+        print("--- Numero total de operacoes: %s nanosegundos ---" % (self.operations))
 
     def get_weight(self, node1, node2):
         for neighbor, weight in self.get_neighbors(node1):
