@@ -166,7 +166,7 @@ class Graph:
             self.operations += 2
 
             if neighbour not in visited:        # Operacao de comparacao N vezes considerando o pior caso
-                self.operations = len(visited)
+                self.operations += len(visited)
 
                 new_path, new_weight = self.dfs_visit(neighbour, end, visited, path, total_weight + weight)     # Duas operacoes de atribuicao e uma de soma
 
@@ -177,7 +177,7 @@ class Graph:
 
                     return new_path, new_weight
         
-        self.operations += 1
+            self.operations += 1
 
         path.pop()  # Operacao de atribuicao
 
