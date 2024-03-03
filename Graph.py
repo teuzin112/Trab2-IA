@@ -2,10 +2,9 @@ from time import perf_counter_ns
 
 class Graph:
 
-    def __init__(self, is_directed, adjacency_list = {}, h = {}):
+    def __init__(self, adjacency_list = {}, h = {}):
         self.h = h
         self.adjacency_list = adjacency_list
-        self.is_directed = is_directed
         self.path_start = None
         self.path_end = None
         self.iterations = 1
@@ -89,7 +88,15 @@ class Graph:
 
                 self.operations += 2
                 print("\n-------------\n")
-                print('Caminho encontrado: {}, Peso total: {}'.format(reconst_path, total_weight))
+                
+                i = 0
+                print('Caminho encontrado: [', end='')
+                while i < len(reconst_path) - 1:
+                    print(reconst_path[i] + " - ", end='')
+                    i += 1
+                print(reconst_path[i], end=']   ')
+                print('Peso total: {}'.format(total_weight))
+
                 final_time = perf_counter_ns()
                 print("--- Tempo total de execucao: %s nanosegundos ---" % (final_time-initial_time))
 
@@ -144,67 +151,70 @@ class Graph:
         return None
 
     def dfs_visit(self, v, end, visited, path, total_weight):
-        # print("-------------\n")
-        # print("Iteracao: %s" % (self.iterations))
-        # print("Numero de operacoes: %s" % (self.operations))
-        # self.iterations += 1
-        # print("No atual: " + str(v))
-        # print("Vizinhos atuais:" + str(self.get_neighbors(v)))
-        # print("\n-------------\n")
+        print("-------------\n")
+        print("Iteracao: %s" % (self.iterations))
+        print("Numero de operacoes: %s" % (self.operations))
+        self.iterations += 1
+        print("No atual: " + str(v))
+        print("Vizinhos atuais:" + str(self.get_neighbors(v)))
+        print("\n-------------\n")
 
         visited.add(v)      # Operacao de atribuicao
         path.append(v)      # Operacao de atribuicao
 
-        # self.operations += 2
+        self.operations += 2
 
         if v == end:        # Operacao de comparacao
-            # self.operations += 1
+            self.operations += 1
 
             return path, total_weight
 
         for (neighbour, weight) in self.get_neighbors(v):       # Duas operacoes de atribuicao mais a de iteracao
-            # self.operations += 2
+            self.operations += 2
 
             if neighbour not in visited:        # Operacao de comparacao N vezes considerando o pior caso
-                # self.operations += len(visited)
+                self.operations += len(visited)
 
                 new_path, new_weight = self.dfs_visit(neighbour, end, visited, path, total_weight + weight)     # Duas operacoes de atribuicao e uma de soma
 
-                # self.operations += 3
+                self.operations += 3
 
                 if new_path:        # Operacao de comparacao
-                    # self.operations += 1
+                    self.operations += 1
 
                     return new_path, new_weight
         
-            # self.operations += 1
+            self.operations += 1
 
         path.pop()  # Operacao de atribuicao
 
-        # self.operations += 1
+        self.operations += 1
         return None
 
     def dfs(self):
         # self.iterations = 1
-        # self.operations = 0
+        self.operations = 0
 
         visited = set()     # Operacao de atribuicao
         path = []       # Operacao de atribuicao
         total_weight = 0        # Operacao de atribuicao
 
-        # self.operations += 3
-
+        self.operations += 3
 
         initial_time = perf_counter_ns()
-
-        # print(self.dfs_visit(self.path_start, self.path_end, visited, path, total_weight))
-
+        path, final_weight = self.dfs_visit(self.path_start, self.path_end, visited, path, total_weight)
         final_time = perf_counter_ns()
-        # print("--- Tempo total de execucao: %s nanosegundos ---" % (final_time-initial_time))
+
+        i = 0
+        print('Caminho encontrado: [', end='')
+        while i < len(path) - 1:
+            print(path[i] + " - ", end='')
+            i += 1
+        print(path[i], end=']   ')
+        print('Peso total: {}'.format(final_weight))
+
+        print("--- Tempo total de execucao: %s nanosegundos ---" % (final_time-initial_time))
         print(final_time-initial_time)
-        f = open("dfs_resultados.txt", "a")
-        f.write("%s\n" % (final_time-initial_time))
-        f.close()
 
     def get_weight(self, node1, node2):
         for neighbor, weight in self.get_neighbors(node1):
@@ -220,15 +230,6 @@ class Graph:
             items = [(destination, weight)]
 
         self.adjacency_list.update({source: items})
-
-        if not self.is_directed:
-            items = self.adjacency_list.get(destination)
-            if items:
-                items.append((source, weight))
-            else:
-                items = [(source, weight)]
-
-            self.adjacency_list.update({destination: items})
 
     def add_h(self, destination, h):
         self.h.update({destination: h})

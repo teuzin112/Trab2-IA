@@ -1,7 +1,7 @@
 import Graph
 
-def read_file(file_path, is_directed):
-    graph = Graph.Graph(is_directed)
+def read_file(file_path):
+    graph = Graph.Graph()
 
     with open(file_path, 'r') as file:
         lines = file.readlines()
@@ -66,18 +66,11 @@ if __name__ == '__main__':
             file_path = input('Entre com o caminho do arquivo\n>>> ')
             print()
 
-            is_directed = input('O grafo é orientado ? [S/N]\n>>> ')
-            print()
-
-            if is_directed in ('S', 's', 'sim'):
-                is_directed = True
-            else:
-                is_directed = False
-            graph_obj = read_file(file_path, is_directed)
+            graph_obj = read_file(file_path)
             
         elif entry == 2 and graph_obj:
-            for i in range(0, 10000):
-                graph_obj.dfs()
+            # for i in range(0, 10000):
+            graph_obj.dfs()
             
         elif entry == 3 and graph_obj:
             #for i in range(0, 10000):
