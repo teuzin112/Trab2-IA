@@ -25,6 +25,10 @@ def read_file(file_path, is_directed):
 
             i += 1
 
+        # Ordena a lista de adjacencia depois que todas as arestas foram inseridas
+        for vertex, neighbours in graph.adjacency_list.items():
+            graph.adjacency_list[vertex] = sorted(neighbours, key=lambda x: x[0])
+
         while i < len(lines) and lines[i].startswith('h('):
             aux = lines[i][lines[i].find('(') + 1 : lines[i].find(')')]
             aux = aux.split(',')
@@ -32,7 +36,12 @@ def read_file(file_path, is_directed):
             vertex_2 = aux[1]
             h = int(aux[2])
 
-            graph.add_h(vertex_1, vertex_2, h)
+            if vertex_1 == graph.path_end:
+                graph.add_h(vertex_2, h)
+            if vertex_2 == graph.path_end:
+                graph.add_h(vertex_1, h)
+            
+            graph.add_h(graph.path_end, 0)
 
             i += 1
         
@@ -53,6 +62,7 @@ if __name__ == '__main__':
         print()
 
         if entry == 1:
+            graph_obj = None
             file_path = input('Entre com o caminho do arquivo\n>>> ')
             print()
 

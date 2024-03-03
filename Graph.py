@@ -13,9 +13,9 @@ class Graph:
     def get_neighbors(self, v):
         return self.adjacency_list[v]
 
-    def get_h(self, source, destination):
+    def get_h(self, destination):
        
-        return self.h.get(source).get(destination)
+        return self.h[destination]
 
     def a_star(self):
         open_list = set([self.path_start])
@@ -28,7 +28,7 @@ class Graph:
         while len(open_list) > 0:
             n = None
             for v in open_list:
-                if n == None or g[v] + self.get_h(self.path_start, v) < g[n] + self.get_h(self.path_start, n):
+                if n == None or g[v] + self.get_h(v) < g[n] + self.get_h(n):
                     n = v
 
             if n == None:
@@ -44,7 +44,6 @@ class Graph:
                     n = parents[n]
                 reconst_path.append(self.path_start)
                 reconst_path.reverse()
-                total_weight += self.get_weight(self.path_start, reconst_path[1])
                 print('Path found: {}, Total Weight: {}'.format(reconst_path, total_weight))
                 return reconst_path
 
@@ -68,7 +67,7 @@ class Graph:
         return None
 
     def dfs(self):
-        stack = [(self.path_start, [self.path_end], 0)]  # Added total_weight to the stack
+        stack = [(self.path_start, [self.path_start], 0)]  # Added total_weight to the stack
         all_paths = []
         while stack:
             (vertex, path, total_weight) = stack.pop()
@@ -78,7 +77,10 @@ class Graph:
                         all_paths.append((path + [neighbor], total_weight + weight))
                     else:
                         stack.append((neighbor, path + [neighbor], total_weight + weight))
-        return sorted(all_paths, key=lambda x: x[1])  # Sorting by total_weight in descending order
+        sorted(all_paths, key=lambda x: x[1])  # Sorting by total_weight in descending order
+
+        for path, total_weight in all_paths:
+            print("Path:", path, "Total Weight:", total_weight)
 
     def get_weight(self, node1, node2):
         for neighbor, weight in self.get_neighbors(node1):
@@ -104,13 +106,5 @@ class Graph:
 
             self.adjacency_list.update({destination: items})
 
-    def add_h(self, source, destination, weight):
-        items = self.h.get(source)
-        if items:
-            items.update({destination: weight})
-        else:
-            items = {destination: weight}
-
-        self.h.update({source: items})
-
-
+    def add_h(self, destination, h):
+        self.h.update({destination: h})
