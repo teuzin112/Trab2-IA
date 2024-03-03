@@ -55,7 +55,7 @@ if __name__ == '__main__':
         print('-'*50 + ' MENU ' + '-'*50)
         print('[1] Carregar Grafo')
         if graph_obj:
-            print('[2] Executar algoritmo DFS com retrocesso')
+            print('[2] Executar algoritmo DFS')
             print('[3] Executar algoritmo A*')
         print('[0] Fechar programa')
         entry = int(input('>>> '))
@@ -76,7 +76,7 @@ if __name__ == '__main__':
             graph_obj = read_file(file_path, is_directed)
             
         elif entry == 2 and graph_obj:
-            #for i in range(0, 10000):
+            for i in range(0, 10000):
                 graph_obj.dfs()
             
         elif entry == 3 and graph_obj:
