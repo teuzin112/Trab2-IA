@@ -41,19 +41,25 @@ class Graph:
         self.iterations = 1
 
         # Enquanto existir nó a ser explorado
-        while len(open_list) > 0:   # Operacao de comparacao
+        while len(open_list) > 0:   # Operacao de comparacao e iteracao
             node = None     # Operacao de atribuicao
             self.operations += 2
             for vertex in open_list:    # Operacao de iteracao
+                self.operations += 1
 
                 # Encontra o melhor nó a ser explorado 
-                if node == None or current_distance[vertex] + self.get_h(vertex) < current_distance[node] + self.get_h(node):   # Operacao de comparacao considerada como 1
+                if node == None or current_distance[vertex] + self.get_h(vertex) < current_distance[node] + self.get_h(node):   # Operacao de comparacao
                     node = vertex   # Operacao de atribuicao
-                    self.operations += 2
-            self.operations += 1
+                    self.operations += 1
 
+                    if node == None:    # Caso a primeira condicao do if seja verdadeira, adiciona somente uma operacao
+                        self.operations += 1
+                    else:   # Caso contrario adiciona 3 (Duas somas e uma comparacao)
+                        self.operations += 3
+                    
             if node == None:    # Operacao de comparacao
                 self.operations += 1
+
                 print('Nao existe caminho!')
                 return None
             
@@ -69,6 +75,7 @@ class Graph:
             if node == self.path_end:   # Operacao de comparacao
                 reconst_path = []   # Operacao de atribuicao
                 total_weight = 0    # Operacao de atribuicao
+
                 self.operations += 2
 
                 # Acumula todos os pontos e pesos do melhor caminho
@@ -96,28 +103,42 @@ class Graph:
                 self.operations += 3
 
                 # Se o vizinho ainda não foi explorado
-                if neighbor not in open_list and neighbor not in closed_list:   # M + N comparacoes
+                if neighbor not in open_list and neighbor not in closed_list:   # M + N comparacoes considerando o pior caso
                     self.operations += len(open_list) + len(closed_list)
+
                     # Adiciona o vizinho à lista de nós a serem explorados e coloca o nó atual como seu pai
-                    open_list.add(neighbor)
-                    parents[neighbor] = node
-                    current_distance[neighbor] = current_distance[node] + weight
+                    open_list.add(neighbor)     # Operacao de atribuicao
+                    parents[neighbor] = node    # Operacao de atribuicao
+                    current_distance[neighbor] = current_distance[node] + weight    # Operacao de atribuicao e soma
+
+                    self.operations += 4
 
                 else:
                     # Verifica se é melhor visitar o nó atual antes de visitar o vizinho, se sim, atualiza as listas de exploração
-                    if current_distance[neighbor] > current_distance[node] + weight:
-                        current_distance[neighbor] = current_distance[node] + weight
-                        parents[neighbor] = node
-                        if neighbor in closed_list:
-                            closed_list.remove(neighbor)
-                            open_list.add(neighbor)
+                    if current_distance[neighbor] > current_distance[node] + weight:    # Operacao de comparacao e soma
+                        current_distance[neighbor] = current_distance[node] + weight    # Operacao de atribuicao e soma
+                        parents[neighbor] = node    # Operacao de atribuicao
+
+                        self.operations += 5
+                        if neighbor in closed_list:     # Operacao de iteracao
+                            self.operations += 1
+
+                            closed_list.remove(neighbor)    # Operacao de atribuicao
+                            open_list.add(neighbor)     # Operacao de atribuicao
+
+                            self.operations += 2
 
             # Terminou de explorar o nó
-            open_list.remove(node)
-            closed_list.add(node)
+            open_list.remove(node)      # Operacao de atribuicao
+            closed_list.add(node)       # Operacao de atribuicao
+
+            self.operations += 2
+            
             print("Nos ja explorados: %s" % (closed_list))
             print("Proximos nos a serem explorados: %s" % (open_list))
             print("\n-------------\n")
+
+            self.operations += 1
 
         print('Nao existe caminho!')
         return None
@@ -130,27 +151,47 @@ class Graph:
         print("Vizinhos atuais:" + str(self.get_neighbors(v)))
         print("\n-------------\n")
 
-        visited.add(v)
-        path.append(v)
+        visited.add(v)      # Operacao de atribuicao
+        path.append(v)      # Operacao de atribuicao
 
-        if v == end:
+        self.operations += 2
+
+        if v == end:        # Operacao de comparacao
+            self.operations += 1
+
             return path, total_weight
 
-        for (neighbour, weight) in self.get_neighbors(v):
-            if neighbour not in visited:
-                new_path, new_weight = self.dfs_visit(neighbour, end, visited, path, total_weight + weight)
-                if new_path:
-                    return new_path, new_weight
+        for (neighbour, weight) in self.get_neighbors(v):       # Duas operacoes de atribuicao mais a de iteracao
+            self.operations += 2
 
-        path.pop()  # Backtrack if no path is found
+            if neighbour not in visited:        # Operacao de comparacao N vezes considerando o pior caso
+                self.operations = len(visited)
+
+                new_path, new_weight = self.dfs_visit(neighbour, end, visited, path, total_weight + weight)     # Duas operacoes de atribuicao e uma de soma
+
+                self.operations += 3
+
+                if new_path:        # Operacao de comparacao
+                    self.operations += 1
+
+                    return new_path, new_weight
+        
+        self.operations += 1
+
+        path.pop()  # Operacao de atribuicao
+
+        self.operations += 1
         return None
 
     def dfs(self):
         self.iterations = 1
+        self.operations = 0
 
-        visited = set()
-        path = []
-        total_weight = 0
+        visited = set()     # Operacao de atribuicao
+        path = []       # Operacao de atribuicao
+        total_weight = 0        # Operacao de atribuicao
+
+        self.operations += 3
 
         print(self.dfs_visit(self.path_start, self.path_end, visited, path, total_weight))
 
