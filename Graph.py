@@ -146,6 +146,7 @@ class Graph:
     def dfs_visit(self, v, end, visited, path, total_weight):
         print("-------------\n")
         print("Iteracao: %s" % (self.iterations))
+        print("Numero de operacoes: %s" % (self.operations))
         self.iterations += 1
         print("No atual: " + str(v))
         print("Vizinhos atuais:" + str(self.get_neighbors(v)))
@@ -194,6 +195,8 @@ class Graph:
         self.operations += 3
 
         print(self.dfs_visit(self.path_start, self.path_end, visited, path, total_weight))
+
+        print(self.operations)
 
     def get_weight(self, node1, node2):
         for neighbor, weight in self.get_neighbors(node1):
