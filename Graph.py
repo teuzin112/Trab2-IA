@@ -105,27 +105,28 @@ class Graph:
         print('Nao existe caminho!')
         return None
 
-    def dfs(self):
-        t = perf_counter_ns()
-        stack = [(self.path_start, [self.path_start], 0)]  # Added total_weight to the stack
-        all_paths = []
-        while stack:
-            (vertex, path, total_weight) = stack.pop()
-            for (neighbor, weight) in self.get_neighbors(vertex):
-                if neighbor not in path:
-                    if neighbor == self.path_end:
-                        all_paths.append((path + [neighbor], total_weight + weight))
-                    else:
-                        stack.append((neighbor, path + [neighbor], total_weight + weight))
-        e = perf_counter_ns()
-        print("--- %s nanosegundos ---" % (e-t))
-        f = open("dfs_resultados.txt", "a")
-        f.write("%s\n" % (e-t))
-        f.close()
-        all_paths = sorted(all_paths, key=lambda x: x[1])  # Sorting by total_weight in descending order
+    def dfs_visit(self, v, end, visited, path, total_weight):
+        visited.add(v)
+        path.append(v)
 
-        for path, total_weight in all_paths:
-            print("Path:", path, "Total Weight:", total_weight)
+        if v == end:
+            return path, total_weight
+
+        for (neighbour, weight) in self.get_neighbors(v):
+            if neighbour not in visited:
+                new_path, new_weight = self.dfs_visit(neighbour, end, visited, path, total_weight + weight)
+                if new_path:
+                    return new_path, new_weight
+
+        path.pop()  # Backtrack if no path is found
+        return None
+
+    def dfs(self):
+        visited = set()
+        path = []
+        total_weight = 0
+
+        print(self.dfs_visit(self.path_start, self.path_end, visited, path, total_weight))
 
     def get_weight(self, node1, node2):
         for neighbor, weight in self.get_neighbors(node1):
