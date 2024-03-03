@@ -34,6 +34,7 @@ class Graph:
         parents = {}
         parents[self.path_start] = self.path_start
 
+        self.iterations = 1
         # Enquanto existir nó a ser explorado
         while len(open_list) > 0:
             node = None
@@ -47,6 +48,7 @@ class Graph:
                 print('Nao existe caminho!')
                 return None
             
+            print("-------------\n")
             print("Iteracao: %s" % (self.iterations))
             self.iterations += 1
             print("No atual: " + str(node))
@@ -65,7 +67,7 @@ class Graph:
                     node = parents[node]
                 reconst_path.append(self.path_start)
                 reconst_path.reverse()
-                print("-------------\n")
+                print("\n-------------\n")
                 print('Caminho encontrado: {}, Peso total: {}'.format(reconst_path, total_weight))
                 final_time = perf_counter_ns()
                 print("--- Tempo total de execucao: %s nanosegundos ---" % (final_time-initial_time))
@@ -100,12 +102,19 @@ class Graph:
             closed_list.add(node)
             print("Nos ja explorados: %s" % (closed_list))
             print("Proximos nos a serem explorados: %s" % (open_list))
-            print("-------------\n")
+            print("\n-------------\n")
 
         print('Nao existe caminho!')
         return None
 
     def dfs_visit(self, v, end, visited, path, total_weight):
+        print("-------------\n")
+        print("Iteracao: %s" % (self.iterations))
+        self.iterations += 1
+        print("No atual: " + str(v))
+        print("Vizinhos atuais:" + str(self.get_neighbors(v)))
+        print("\n-------------\n")
+
         visited.add(v)
         path.append(v)
 
@@ -122,6 +131,8 @@ class Graph:
         return None
 
     def dfs(self):
+        self.iterations = 1
+
         visited = set()
         path = []
         total_weight = 0
