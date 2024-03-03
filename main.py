@@ -76,9 +76,9 @@ if __name__ == '__main__':
             graph_obj = read_file(file_path, is_directed)
             
         elif entry == 2 and graph_obj:
-            for i in range(0, 100):
+            #for i in range(0, 10000):
                 graph_obj.dfs()
             
         elif entry == 3 and graph_obj:
-            for i in range(0, 100):
+            #for i in range(0, 10000):
                 graph_obj.a_star()

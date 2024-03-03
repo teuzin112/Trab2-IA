@@ -1,2 +1,5 @@
 /.venv
 /__pycache__
+aestrela_resultados.txt
+dfs_resultados.txt
+calculo.py
