@@ -1,5 +1,5 @@
 from collections import deque
-import time
+from time import perf_counter_ns
     
 class Graph:
 
@@ -18,6 +18,7 @@ class Graph:
         return self.h[destination]
 
     def a_star(self):
+        t = perf_counter_ns()
         open_list = set([self.path_start])
         closed_list = set([])
         g = {}
@@ -45,6 +46,8 @@ class Graph:
                 #reconst_path.append(self.path_start)
                 #reconst_path.reverse()
                 #print('Path found: {}, Total Weight: {}'.format(reconst_path, total_weight))
+                e = perf_counter_ns()
+                print("--- %s nanoseconds ---" % (e-t))
                 return reconst_path
 
             for (m, weight) in self.get_neighbors(n):
@@ -67,6 +70,7 @@ class Graph:
         return None
 
     def dfs(self):
+        t = perf_counter_ns()
         stack = [(self.path_start, [self.path_start], 0)]  # Added total_weight to the stack
         all_paths = []
         while stack:
@@ -77,6 +81,8 @@ class Graph:
                         all_paths.append((path + [neighbor], total_weight + weight))
                     else:
                         stack.append((neighbor, path + [neighbor], total_weight + weight))
+        e = perf_counter_ns()
+        print("--- %s nanoseconds ---" % (e-t))
         #all_paths = sorted(all_paths, key=lambda x: x[1])  # Sorting by total_weight in descending order
 
        # for path, total_weight in all_paths:
