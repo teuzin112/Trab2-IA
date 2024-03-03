@@ -1,4 +1,5 @@
 import Graph
+from time import perf_counter_ns
 
 def read_file(file_path, is_directed):
     graph = Graph.Graph(is_directed)
@@ -76,8 +77,13 @@ if __name__ == '__main__':
             graph_obj = read_file(file_path, is_directed)
             
         elif entry == 2 and graph_obj:
+            t = perf_counter_ns()
             graph_obj.dfs()
+            e = perf_counter_ns()
+            print("--- %s nanoseconds ---" % (e-t))
         
         elif entry == 3 and graph_obj:
+            t = perf_counter_ns()
             graph_obj.a_star()
-
+            e = perf_counter_ns()
+            print("--- %s nanoseconds ---" % (e-t))

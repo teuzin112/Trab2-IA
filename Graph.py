@@ -42,9 +42,9 @@ class Graph:
                     reconst_path.append(n)
                     total_weight += self.get_weight(parents[n], n)
                     n = parents[n]
-                reconst_path.append(self.path_start)
-                reconst_path.reverse()
-                print('Path found: {}, Total Weight: {}'.format(reconst_path, total_weight))
+                #reconst_path.append(self.path_start)
+                #reconst_path.reverse()
+                #print('Path found: {}, Total Weight: {}'.format(reconst_path, total_weight))
                 return reconst_path
 
             for (m, weight) in self.get_neighbors(n):
@@ -77,10 +77,10 @@ class Graph:
                         all_paths.append((path + [neighbor], total_weight + weight))
                     else:
                         stack.append((neighbor, path + [neighbor], total_weight + weight))
-        sorted(all_paths, key=lambda x: x[1])  # Sorting by total_weight in descending order
+        #all_paths = sorted(all_paths, key=lambda x: x[1])  # Sorting by total_weight in descending order
 
-        for path, total_weight in all_paths:
-            print("Path:", path, "Total Weight:", total_weight)
+       # for path, total_weight in all_paths:
+        #    print("Path:", path, "Total Weight:", total_weight)
 
     def get_weight(self, node1, node2):
         for neighbor, weight in self.get_neighbors(node1):
