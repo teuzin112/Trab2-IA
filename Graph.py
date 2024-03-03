@@ -48,6 +48,10 @@ class Graph:
                 #print('Path found: {}, Total Weight: {}'.format(reconst_path, total_weight))
                 e = perf_counter_ns()
                 print("--- %s nanoseconds ---" % (e-t))
+
+                f = open("aestrela_resultados.txt", "a")
+                f.write("%s\n" % (e-t))
+                f.close()
                 return reconst_path
 
             for (m, weight) in self.get_neighbors(n):
@@ -83,6 +87,9 @@ class Graph:
                         stack.append((neighbor, path + [neighbor], total_weight + weight))
         e = perf_counter_ns()
         print("--- %s nanoseconds ---" % (e-t))
+        f = open("dfs_resultados.txt", "a")
+        f.write("%s\n" % (e-t))
+        f.close()
         #all_paths = sorted(all_paths, key=lambda x: x[1])  # Sorting by total_weight in descending order
 
        # for path, total_weight in all_paths:
