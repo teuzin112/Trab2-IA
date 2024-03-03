@@ -9,6 +9,7 @@ class Graph:
         self.path_start = None
         self.path_end = None
         self.iterations = 1
+        self.operations = 0
 
     def get_neighbors(self, v):
         return self.adjacency_list[v]
@@ -17,72 +18,86 @@ class Graph:
         return self.h[destination]
 
     def a_star(self):
+        self.operations = 0
         print("-------------")
 
         # Inicia o contador de tempo
         initial_time = perf_counter_ns()
 
         # Inicializa as listas de nós a serem explorados (open_list) e que já foram explorados (closed_list)
-        open_list = set([self.path_start])
-        closed_list = set([])
+        open_list = set([self.path_start])  # Operacao de atribuicao
+        closed_list = set([])   # Operacao de atribuicao
 
         # Distancia até os outros nós
-        current_distance = {}
-        current_distance[self.path_start] = 0
+        current_distance = {}   # Operacao de atribuicao
+        current_distance[self.path_start] = 0   # Operacao de atribuicao
 
         # Declara e inicializa o dicionario do pai de cada nó 
-        parents = {}
-        parents[self.path_start] = self.path_start
+        parents = {}    # Operacao de atribuicao
+        parents[self.path_start] = self.path_start  # Operacao de atribuicao
 
+        # Variaveis para medicao do desempenho
+        self.operations += 6
         self.iterations = 1
+
         # Enquanto existir nó a ser explorado
-        while len(open_list) > 0:
-            node = None
-            for vertex in open_list:
+        while len(open_list) > 0:   # Operacao de comparacao
+            node = None     # Operacao de atribuicao
+            self.operations += 2
+            for vertex in open_list:    # Operacao de iteracao
 
                 # Encontra o melhor nó a ser explorado 
-                if node == None or current_distance[vertex] + self.get_h(vertex) < current_distance[node] + self.get_h(node):
-                    node = vertex
+                if node == None or current_distance[vertex] + self.get_h(vertex) < current_distance[node] + self.get_h(node):   # Operacao de comparacao considerada como 1
+                    node = vertex   # Operacao de atribuicao
+                    self.operations += 2
+            self.operations += 1
 
-            if node == None:
+            if node == None:    # Operacao de comparacao
+                self.operations += 1
                 print('Nao existe caminho!')
                 return None
             
             print("-------------\n")
             print("Iteracao: %s" % (self.iterations))
+            print("Numero de operacoes: %s" % (self.operations))
             self.iterations += 1
             print("No atual: " + str(node))
             print("Vizinhos atuais:" + str(self.get_neighbors(node)))
             
 
             # Se chegou ao ponto final
-            if node == self.path_end:
-                reconst_path = []
-                total_weight = 0
+            if node == self.path_end:   # Operacao de comparacao
+                reconst_path = []   # Operacao de atribuicao
+                total_weight = 0    # Operacao de atribuicao
+                self.operations += 2
 
                 # Acumula todos os pontos e pesos do melhor caminho
-                while parents[node] != node:
-                    reconst_path.append(node)
-                    total_weight += self.get_weight(parents[node], node)
-                    node = parents[node]
-                reconst_path.append(self.path_start)
-                reconst_path.reverse()
+                while parents[node] != node:    # Operacao de comparacao
+                    reconst_path.append(node)   # Operacao de atribuicao
+                    total_weight += self.get_weight(parents[node], node)    # Operacao de atribuicao e soma
+                    node = parents[node]    # Operacao de atribuicao
+                    self.operations += 5
+                reconst_path.append(self.path_start)    # Operacao de atribuicao
+                reconst_path.reverse()      # Operacao de atribuicao
+
+                self.operations += 2
                 print("\n-------------\n")
                 print('Caminho encontrado: {}, Peso total: {}'.format(reconst_path, total_weight))
                 final_time = perf_counter_ns()
                 print("--- Tempo total de execucao: %s nanosegundos ---" % (final_time-initial_time))
 
-                f = open("aestrela_resultados.txt", "a")
-                f.write("%s\n" % (final_time-initial_time))
-                f.close()
+                # f = open("aestrela_resultados.txt", "a")
+                # f.write("%s\n" % (final_time-initial_time))
+                # f.close()
                 return reconst_path
 
             # Para todos os vizinhos do nó atual
-            for (neighbor, weight) in self.get_neighbors(node):
+            for (neighbor, weight) in self.get_neighbors(node):     # Operacao de comparacao e duas atribuicoes
+                self.operations += 3
 
                 # Se o vizinho ainda não foi explorado
-                if neighbor not in open_list and neighbor not in closed_list:
-
+                if neighbor not in open_list and neighbor not in closed_list:   # M + N comparacoes
+                    self.operations += len(open_list) + len(closed_list)
                     # Adiciona o vizinho à lista de nós a serem explorados e coloca o nó atual como seu pai
                     open_list.add(neighbor)
                     parents[neighbor] = node
