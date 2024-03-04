@@ -59,6 +59,7 @@ if __name__ == '__main__':
         if graph_obj:
             print('[2] Executar algoritmo DFS')
             print('[3] Executar algoritmo A*')
+            print('[4] Executar algoritmo BFS')
         print('[0] Fechar programa')
         entry = int(input('>>> '))
         print()
@@ -75,3 +76,6 @@ if __name__ == '__main__':
             
         elif entry == 3 and graph_obj:
             graph_obj.a_star()
+        
+        elif entry == 4 and graph_obj:
+            graph_obj.bfs()

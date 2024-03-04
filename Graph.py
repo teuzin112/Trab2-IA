@@ -1,4 +1,5 @@
 from time import perf_counter_ns
+from collections import deque
 
 class Graph:
 
@@ -69,11 +70,12 @@ class Graph:
             print("Numero de operacoes: %s" % (self.operations))
             self.iterations += 1
             print("No atual: " + str(node))
-            print("Vizinhos atuais:" + str(self.get_neighbors(node)))
+            print("Vizinhos atuais: " + str(self.get_neighbors(node)))
             
 
             # Se chegou ao ponto final
             if node == self.path_end:   # Operação de comparação
+                # Inicializa uma lista para reconstruir o caminho
                 reconst_path = []   # Operação de atribuição
                 total_weight = 0    # Operação de atribuição
 
@@ -81,11 +83,16 @@ class Graph:
 
                 # Acumula todos os pontos e pesos do melhor caminho
                 while parents[node] != node:    # Operação de comparação
+                    # Adiciona o nó atual ao caminho reconstruído
                     reconst_path.append(node)   # Operação de atribuição
                     total_weight += self.get_weight(parents[node], node)    # Operação de atribuição e soma
+
+                    # Move para o nó pai
                     node = parents[node]    # Operação de atribuição
                     self.operations += 5
+                # Adiciona o nó inicial ao final da lista de reconstituição
                 reconst_path.append(self.path_start)    # Operação de atribuição
+                # Inverte o caminho reconstruído para obtê-lo do início ao fim
                 reconst_path.reverse()      # Operação de atribuição
 
                 self.operations += 2
@@ -158,7 +165,8 @@ class Graph:
         print("Numero de operacoes: %s" % (self.operations))
         self.iterations += 1
         print("No atual: " + str(v))
-        print("Vizinhos atuais:" + str(self.get_neighbors(v)))
+        print("Vizinhos atuais: " + str(self.get_neighbors(v)))
+        print("Nos ja explorados: " + str(visited))
         print("\n-------------\n")
 
         visited.add(v)      # Operação de atribuição
@@ -243,3 +251,86 @@ class Graph:
     # Método para adicionar um valor da funcao heuristica do grafo
     def add_h(self, destination, h):
         self.h.update({destination: h})
+
+    def bfs(self):
+        self.operations = 0
+        self.iterations = 0
+
+        initial_time = perf_counter_ns()        # Variável auxiliar para calcular o tempo de execução
+        visited = set()     # Operação de atribuição
+
+        # Inicializa uma fila com o nó inicial
+        queue = deque([self.path_start])        # Duas operações de atribuição
+
+        parents = {}        # Operação de atribuição
+        parents[self.path_start] = None     # Operação de atribuição
+
+        total_weight = 0
+        self.operations += 5
+
+        while queue:    # Operação de comparação
+            self.iterations += 1
+            current_node = queue.popleft()      # Operação de atribuição
+            visited.add(current_node)       # Operação de atribuição
+
+            self.operations += 3
+
+
+            print("-------------\n")
+            print("Iteracao: %s" % (self.iterations))
+            print("Numero de operacoes: %s" % (self.operations))
+            print("No atual: " + str(current_node))
+            print("Vizinhos atuais: " + str(self.get_neighbors(current_node)))
+            print("Nos ja explorados: " + str(visited))
+            print("\n-------------\n")
+
+            # Se o nó atual for o nó final, caminho encontrado
+            if current_node == self.path_end:       # Operação de comparação
+                # Inicializa uma lista para reconstruir o caminho
+                reconst_path = []       # Operação de atribuição  
+
+                self.operations += 2
+                while current_node is not None:     # Operação de comparação
+                    # Adiciona o nó atual ao caminho reconstruído
+                    reconst_path.append(current_node)   # Operação de atribuição
+
+                    # Move para o nó pai
+                    current_node = parents[current_node]    # Operação de atribuição
+
+                    self.operations += 3
+                # Inverte o caminho reconstruído para obtê-lo do início ao fim
+                reconst_path.reverse()      # Operação de atribuição
+
+                self.operations += 1
+
+                # Calcula o peso total do caminho
+                for i in range(len(reconst_path) - 1):
+                    total_weight += self.get_weight(reconst_path[i], reconst_path[i+1])    # Soma o peso das arestas do caminho
+                    self.operations += 1
+
+
+                print('Caminho encontrado: [', end='')
+                i = 0
+                while i < len(reconst_path) - 1:
+                    print(reconst_path[i] + " - ", end='')
+                    i += 1
+                print(reconst_path[i], end=']   ')
+                print('Peso total: {}'.format(total_weight))
+
+                final_time = perf_counter_ns()      # Variável auxiliar para calcular o tempo de execução
+
+                print("--- Tempo total de execucao: %s nanosegundos ---" % (final_time-initial_time))
+                print("--- Numero total de iteracoes: %s ---" % (self.iterations))
+                print("--- Numero total de operacoes: %s ---" % (self.operations))
+
+                return reconst_path
+
+            # Explora os vizinhos do nó atual
+            for neighbor, _ in self.get_neighbors(current_node):
+                if neighbor not in visited:
+                    # Adiciona o vizinho à fila para exploração posterior
+                    queue.append(neighbor)
+
+                    # Define o nó atual como o pai do vizinho
+                    parents[neighbor] = current_node
+        
