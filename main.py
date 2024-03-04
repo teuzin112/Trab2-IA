@@ -1,5 +1,6 @@
 import Graph
 
+# Função auxiliar para ler um arquivo texto e inicializar o grafo corretamente
 def read_file(file_path):
     graph = Graph.Graph()
 
@@ -22,6 +23,7 @@ def read_file(file_path):
             weight = int(aux[2])
 
             graph.add_edge(vertex_1, vertex_2, weight)
+            graph.add_edge(vertex_2, vertex_1, weight)
 
             i += 1
 
@@ -69,9 +71,7 @@ if __name__ == '__main__':
             graph_obj = read_file(file_path)
             
         elif entry == 2 and graph_obj:
-            # for i in range(0, 10000):
             graph_obj.dfs()
             
         elif entry == 3 and graph_obj:
-            #for i in range(0, 10000):
-                graph_obj.a_star()
+            graph_obj.a_star()
