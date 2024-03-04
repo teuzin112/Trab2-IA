@@ -190,7 +190,7 @@ class Graph:
         
             self.operations += 1
 
-        # Caso não tenha um caminho no nó atual, remove o último nó da pila do caminho
+        # Caso não tenha um caminho no nó atual, remove o último nó da pilha do caminho
         path.pop()  # Operação de atribuição
 
         self.operations += 1
@@ -198,7 +198,7 @@ class Graph:
 
     # Método principal para executar o algoritmo DFS
     def dfs(self):
-        # self.iterations = 1
+        self.iterations = 1
         self.operations = 0
 
         visited = set()     # Operação de atribuição
@@ -223,14 +223,14 @@ class Graph:
         print("--- Numero total de iteracoes: %s ---" % (self.iterations))
         print("--- Numero total de operacoes: %s ---" % (self.operations))
 
-    # Metodo que retorna o peso da aresta entre dois nos
+    # Método que retorna o peso da aresta entre dois nos
     def get_weight(self, node1, node2):
         for neighbor, weight in self.get_neighbors(node1):
             if neighbor == node2:
                 return weight
         return float('inf')  # Assumindo infinito se nao existir a aresta
 
-    # Metodo para adicionar uma aresta ao grafo
+    # Método para adicionar uma aresta ao grafo
     def add_edge(self, source, destination, weight):
         items = self.adjacency_list.get(source)
         if items:
@@ -240,6 +240,6 @@ class Graph:
 
         self.adjacency_list.update({source: items})
 
-    # Metodo para adicionar um valor da funcao heuristica do grafo
+    # Método para adicionar um valor da funcao heuristica do grafo
     def add_h(self, destination, h):
         self.h.update({destination: h})
